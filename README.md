@@ -1,4 +1,1 @@
-# Program do rzucania kostkami do dnd
-CELE:
-rzucanie dowolnymi kostkami xdy+cos;
-adv/dis
+# Program do rzucania kostkami w formacie XdY (np. 3d6)
