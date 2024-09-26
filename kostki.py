@@ -19,7 +19,7 @@ def roll_dice(roll_expression):
                 total_sum -= sum(dice_rolls)
         else:
             results.append(part)
-            total_sum += int(part);
+            total_sum += int(part.replace(" ","").replace("+",""));
     return results, total_sum
 
 while True:
@@ -30,4 +30,4 @@ while True:
 
     results, total_sum = roll_dice(expression)
 
-    print(" + ".join(results).replace("+ -","- "), '=', total_sum)
+    print(" + ".join(results).replace("+ -","- ").replace("+ +","+"), '=', total_sum)
