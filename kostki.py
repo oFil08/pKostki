@@ -2,19 +2,19 @@ import random
 import re
 
 def roll_dice(roll_expression):
-    dice_parts = re.split(r'\s*[\+]\s*', roll_expression)
+    dice_parts = re.split(r'(?=[+-])', roll_expression)
     results = []
     total_sum = 0
     
     for part in dice_parts:
         if "d" in part:
             dice = part.split("d")
-            if int(dice[0]) > 0:
-                dice_rolls = [random.randint(1, int(dice[1])) for _ in range(int(dice[0]))]
+            if int(dice[0].replace(" ","")) > 0:
+                dice_rolls = [random.randint(1, int(dice[1])) for _ in range(int(dice[0].replace(" ","")))]
                 results.append("(" + " + ".join(map(str, dice_rolls)) + ")")
                 total_sum += sum(dice_rolls)
-            elif int(dice[0]) < 0:
-                dice_rolls = [random.randint(1, int(dice[1])) for _ in range(abs(int(dice[0])))]
+            elif int(dice[0].replace(" ","")) < 0:
+                dice_rolls = [random.randint(1, int(dice[1])) for _ in range(abs(int(dice[0].replace(" ",""))))]
                 results.append("- (" + " + ".join(map(str, dice_rolls)) + ")")
                 total_sum -= sum(dice_rolls)
         else:
@@ -30,4 +30,4 @@ while True:
 
     results, total_sum = roll_dice(expression)
 
-    print(" + ".join(results).replace("+ - ","- "), '=', total_sum)
+    print(" + ".join(results).replace("+ -","- "), '=', total_sum)
