@@ -1,6 +1,4 @@
 # Program do rzucania kostkami w formacie XdY (np. 3d6)
 wpisz exit zeby wyjsc <br />
 odpal plik DiceRoller.exe <br />
-jak nie dasz spacji między plusami (+) to wonky działa <br />
-za to minusty (-) działają tylko bez spacji (?????)
-
+zeby cos odjąć trzeba zrobić np 1d20 + -1d4
