@@ -5,20 +5,20 @@ def roll_dice(roll_expression):
     dice_parts = re.split(r'(?=[+-])', roll_expression)
     results = []
     total_sum = 0
-
+    
     for part in dice_parts:
         if "d" in part:
             dice = part.split("d")
 
-            if dice[0].strip()=='':
+            if dice[0].replace(" ","")=='':
                 dice[0] = '1'
-            elif dice[0].strip() == '-':
+            elif dice[0].replace(" ","") == '-':
                 dice[0]='-1'
-            elif dice[0].strip() == '+':
+            elif dice[0].replace(" ","") == '+':
                 dice[0]='1'
             
-            num_sides = int(dice[1].strip())
-            num_dice = int(dice[0].strip())
+            num_sides = int(dice[1].replace(" ",""))
+            num_dice = int(dice[0].replace(" ",""))
 
             if num_dice  > 0:
                 dice_rolls = [random.randint(1, num_sides ) for _ in range(num_dice )]
