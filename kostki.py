@@ -1,6 +1,5 @@
 import random
 import re
-import math
 
 def roll_dice(roll_expression):
     dice_parts = re.split(r'(?=[+-])', roll_expression)
@@ -11,13 +10,13 @@ def roll_dice(roll_expression):
         if "d" in part:
             dice = part.split("d")
 
-            if dice[0].strip=='':
+            if dice[0].strip()=='':
                 dice[0] = '1'
             elif dice[0].strip() == '-':
                 dice[0]='-1'
-
-            print(dice)
-
+            elif dice[0].strip() == '+':
+                dice[0]='1'
+            
             num_sides = int(dice[1].strip())
             num_dice = int(dice[0].strip())
 
