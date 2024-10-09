@@ -1,44 +1,78 @@
 import random
 import re
 
-def roll_dice(roll_expression):
-    dice_parts = re.split(r'(?=[+-])', roll_expression)
-    results = []
-    total_sum = 0
-    
-    for part in dice_parts:
-        if "d" in part:
-            dice = part.split("d")
 
-            if dice[0].replace(" ","")=='':
-                dice[0] = '1'
-            elif dice[0].replace(" ","") == '-':
-                dice[0]='-1'
-            elif dice[0].replace(" ","") == '+':
-                dice[0]='1'
-            
-            num_sides = int(dice[1].replace(" ",""))
-            num_dice = int(dice[0].replace(" ",""))
+tokenSpecification = [
+    ('DICE',     r'\d+d\d+'),
+    ('NUMBER',   r'\d+'),
+    ('PLUS',     r'\+'),
+    ('MINUS',    r'\-'),
+    ('WS',       r'\s+'),
+]
 
-            if num_dice  > 0:
-                dice_rolls = [random.randint(1, num_sides ) for _ in range(num_dice )]
-                results.append("(" + " + ".join(map(str, dice_rolls)) + ")")
-                total_sum += sum(dice_rolls)
-            elif num_dice  < 0:
-                dice_rolls = [random.randint(1, num_sides ) for _ in range(abs(num_dice ))]
-                results.append("- (" + " + ".join(map(str, dice_rolls)) + ")")
-                total_sum -= sum(dice_rolls)
+pattern = re.compile('|'.join('(?P<%s>%s)' % pair for pair in tokenSpecification))
+
+def tokenise(expression):
+    tokens = []
+    for mo in pattern.finditer(expression):
+        kind = mo.lastgroup
+        value = mo.group()
+        if(kind == "NUMBER"):
+            tokens.append((kind, int(value)))
+        elif(kind == "WS"):
+            continue
         else:
-            results.append(part)
-            total_sum += int(part.replace(" ","").replace("+",""))
-    return results, total_sum
+            tokens.append((kind, value))
+    return tokens;
+
+class Roller:
+    def __init__(self, tokens):
+        self.tokens = tokens
+        self.pos = 0
+
+    def roll(self):
+        total_sum = 0
+        results = []
+
+        rolls, dsum = self.evaluate(self.tokens[self.pos])
+        results.append(rolls)
+        total_sum += dsum
+
+        for token in self.tokens:
+            if token[0] == "PLUS":
+                rolls, dsum = self.evaluate(self.tokens[self.pos+1])
+                results.append("+ "+rolls)
+                total_sum += dsum
+            elif token[0] == "MINUS":
+                rolls, dsum = self.evaluate(self.tokens[self.pos+1])
+                results.append("- "+rolls)
+                total_sum -= dsum
+            self.pos += 1
+        return results, total_sum
+                
+    def evaluate(self, token):
+        if token[0] == 'NUMBER':
+            return str(token[1]), token[1]
+        elif token[0] == 'DICE':
+            num_dice, num_sides = self.splitDiceExpr(token[1])
+            rolls = [random.randint(1, num_sides) for _ in range(num_dice)]
+            return "("+", ".join(map(str,rolls))+")", sum(rolls)
+        
+    def splitDiceExpr(self,dice_expr):
+        expresion = dice_expr.split("d")
+        return int(expresion[0]), int(expresion[1])
+    
 
 while True:
-    expression = input("Dice to roll: \n")
-
-    if expression.lower() == 'exit':
+    query = input("Dice to roll:")
+    if query == "exit":
         break
 
-    results, total_sum = roll_dice(expression)
+    r1 = Roller(tokenise(query))
+    results, total_sum = r1.roll()
 
-    print(" + ".join(results).replace("+ -","- ").replace("+ +","+"), '=', total_sum)
+    rolled_results = " ".join(map(str, results))
+    total_sum_str = total_sum
+
+    returner = f"**Rolled:** {rolled_results}\n**Sum:** {total_sum_str}"
+    print(returner)
