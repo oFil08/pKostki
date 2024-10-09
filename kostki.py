@@ -64,7 +64,7 @@ class Roller:
     
 
 while True:
-    if query := input("Dice to roll:") == "exit":
+    if query := input("Dice to roll:\n") == "exit":
         break
 
     r1 = Roller(tokenise(query))
